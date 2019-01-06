@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DefaultWindowFactoryConfiguration>
+  <!-- Panel ***************************************************************-->
+  <Window class="#32770" type="Panel" />
+
+  <!-- Button **************************************************************-->
+  <Window class="BUTTON" type="Button" />
+
+  <!-- ComboBox ************************************************************-->
+  <Window class="COMBOBOX" type="ComboBox" />
+  <Window class="COMBOBOXEX32" type="ComboBox" />
+  <!-- MSCOMCTL.OCX -->
+  <Window class="IMAGECOMBO20WNDCLASS" type="ComboBox" />
+
+  <!-- DateTimePicker ******************************************************-->
+  <Window class="SYSDATETIMEPICK32" type="DateTimePicker" />
+  <!-- MSCOMCT2.OCX -->
+  <Window class="DTPICKER20WNDCLASS" type="DateTimePicker" />
+
+  <!-- Label ***************************************************************-->
+  <Window class="STATIC" type="Label" />
+
+  <!-- ListBox *************************************************************-->
+  <Window class="LISTBOX" type="ListBox" />
+
+  <!-- ListView ************************************************************-->
+  <Window class="SYSLISTVIEW32" type="ListView" />
+  <!-- COMCTL32.OCX -->
+  <Window class="LISTVIEWWNDCLASS" type="ListView" />
+  <!-- MSCOMCTL.OCX -->
+  <Window class="LISTVIEW20WNDCLASS" type="ListView" />
+
+  <!-- MdiClient ***********************************************************-->
+  <Window class="MDICLIENT" type="MdiClient" />
+
+  <!-- MonthCalendar *******************************************************-->
+  <Window class="SYSMONTHCAL32" type="MonthCalendar" />
+  <!-- MSCOMCT2.OCX -->
+  <Window class="MONTHVIEW20WNDCLASS" type="MonthCalendar" />
+
+  <!-- ProgressBar *********************************************************-->
+  <Window class="MSCTLS_PROGRESS32" type="ProgressBar" />
+  <!-- COMCTL32.OCX -->
+  <Window class="PROGRESSBARWNDCLASS" type="ProgressBar" />
+  <!-- MSCOMCTL.OCX -->
+  <Window class="PROGRESSBAR20WNDCLASS" type="ProgressBar" />
+
+  <!-- Rebar ***************************************************************-->
+  <Window class="REBARWINDOW32" type="Rebar" />
+
+  <!-- RichTextBox *********************************************************-->
+  <Window class="RICHEDIT" type="RichTextBox" />
+  <Window class="RICHEDIT20A" type="RichTextBox" />
+  <Window class="RICHEDIT20W" type="RichTextBox" />
+  <Window class="RICHEDIT30A" type="RichTextBox" />
+  <Window class="RICHEDIT30W" type="RichTextBox" />
+  <Window class="RICHEDIT40A" type="RichTextBox" />
+  <Window class="RICHEDIT40W" type="RichTextBox" />
+  <Window class="RICHEDIT50A" type="RichTextBox" />
+  <Window class="RICHEDIT50W" type="RichTextBox" />
+  <Window class="RICHEDIT20WPT" type="AccessibilityTarget" />
+  <!-- RICHTX32.OCX -->
+  <Window class="RICHTEXTWNDCLASS" type="RichTextBox" />
+
+  <!-- StatusBar ***********************************************************-->
+  <Window class="MSCTLS_STATUSBAR32" type="StatusBar" />
+  <!-- COMCTL32.OCX -->
+  <Window class="STATUSBARWNDCLASS" type="StatusBar" />
+  <!-- MSCOMCTL.OCX -->
+  <Window class="STATUSBAR20WNDCLASS" type="StatusBar" />
+
+  <!-- TabStrip ************************************************************-->
+  <Window class="SYSTABCONTROL32" type="TabStrip" />
+  <!-- COMCTL32.OCX -->
+  <Window class="TABSTRIPWNDCLASS" type="TabStrip" />
+  <!-- MSCOMCTL.OCX -->
+  <Window class="TABSTRIP20WNDCLASS" type="TabStrip" />
+
+  <!-- TextBox *************************************************************-->
+  <Window class="EDIT" type="TextBox" />
+
+  <!-- ToolBar *************************************************************-->
+  <Window class="TOOLBARWINDOW32" type="ToolBar" />
+  <!-- MSCOMCTL.OCX -->
+  <Window class="MSVB_LIB_TOOLBAR" type="ToolBar" />
+
+  <!-- TrackBar ************************************************************-->
+  <Window class="MSCTLS_TRACKBAR32" type="TrackBar" />
+  <!-- COMCTL32.OCX -->
+  <Window class="SLIDERWNDCLASS" type="TrackBar" />
+  <!-- MSCOMCTL.OCX -->
+  <Window class="SLIDER20WNDCLASS" type="TrackBar" />
+
+  <!-- TreeView ************************************************************-->
+  <Window class="SYSTREEVIEW32" type="TreeView" />
+  <!-- COMCTL32.OCX -->
+  <Window class="TREEVIEWWNDCLASS" type="TreeView" />
+  <!-- MSCOMCTL.OCX -->
+  <Window class="TREEVIEW20WNDCLASS" type="TreeView" />
+
+  <!-- UpDown **************************************************************-->
+  <Window class="MSCTLS_UPDOWN32" type="UpDown" />
+  <!-- COMCT232.OCX -->
+  <Window class="UPDOWNWNDCLASS" type="UpDown" />
+  <!-- MSCOMCT2.OCX -->
+  <Window class="UPDOWN20WNDCLASS" type="UpDown" />
+</DefaultWindowFactoryConfiguration>

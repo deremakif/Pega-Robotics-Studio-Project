@@ -1,0 +1,8 @@
+<DeploymentManifest version="5.0">
+  <CompositeStudioProject name="SUA_prj" fileName="SUA_prj.dll" assemblyName="SUA_prj.dll" id="Project-8D670B5D2DE712A" version="8.0.1096.0" deploymentVersion="1.0" configuration="" createdWith="Build" obfuscated="False" runtime="True" digest="506C56653266C98A6D03BCC5F80B2F">
+    <Assemblies>
+      <Assembly value="SUA_prj.dll" digest="6B6B4AD1D32C21E270A38F7E3EA37A" />
+      <Assembly value="SUA_prj.pdb" digest="2C2BE8135ED47CCC0DFDC4E553AB18" />
+    </Assemblies>
+  </CompositeStudioProject>
+</DeploymentManifest>

@@ -1,0 +1,521 @@
+<Interaction Name="Call" xmlns:json='http://james.newtonking.com/projects/json'>
+
+	<!--	The Context section defines what information is stored about an interaction. Property values are set and
+		retrieved via the InteractionManager component. Defining a context includes defining these values:
+
+			Name - Identifies the property in automations and in the plug-in configuration.
+			Type - Specifies the property's underlying data type. Valid entries are String, Number, Boolean, and Date.
+			Default - Specifies a default value. The property is populated with this value when an
+			   interaction is created.
+			Format - Controls how the system displays the value. Strings can be formatted as either numbers or dates.
+				Several Numeric options are:
+					"C" for currency
+					"D" for decimal
+					"P" for percent
+				Several Date options are:
+					"d" for short date (month, day, year)
+					"D" for long date (day of week, month, day, year)
+					"m" or "M" for month format (day, month)
+					"y" or "Y" for year format (month, year)
+					"t" for short time (time to minutes)
+					"T" for long time (time to seconds)
+					"g" for short date and time (day, month, year, time to minutes)
+					"G" for long date and time (day, month, year, time to seconds)
+					"u" for universal time
+			-->
+
+	<Context>
+		<Value Name="ClientFullName" Type="String" Default=""/>
+		<Value Name="SocialInfluence" Type="Number" Default="0"/>
+		<Value Name="LifetimeValue" Type="Number" Default="0"/>
+		<Value Name="HasTV" Type="Boolean" Default="False"/>
+		<Value Name="HasData" Type="Boolean" Default="False"/>
+		<Value Name="HasVoice" Type="Boolean" Default="False"/>
+		<Value Name="DataPlan" Type="String" Default="An Example Data Plan Description That Can Span Multiple Lines"/>
+		<Value Name="VoicePlan" Type="String" Default="My Voice Plan"/>
+		<Value Name="TextPlan" Type="String" Default="My Text Plan Description That Does Not Wrap To Next Line"/>
+		<Value Name="Address1" Type="String" Default="1000 Main St"/>
+		<Value Name="Address2" Type="String" Default="Suite 101"/>
+		<Value Name="City" Type="String" Default="Atlanta"/>
+		<Value Name="State" Type="String" Default="GA"/>
+		<Value Name="Zipcode" Type="String" Default="00000"/>
+		<Value Name="Phone1" Type="String" Default=""/>
+		<Value Name="Phone2" Type="String" Default=""/>
+		<Value Name="Phone3" Type="String" Default=""/>
+		<Value Name="Address3" Type="String" Default=""/>
+		<Value Name="Address4" Type="String" Default=""/>
+		<Value Name="Email1" Type="String" Default="example@email1.com"/>
+		<Value Name="Email2" Type="String" Default="example@email2.com"/>
+		<Value Name="Email3" Type="String" Default=""/>
+		<Value Name="CurrentCharges" Type="Number" Format="C" Default="0"/>
+		<Value Name="PastDue" Type="Number" Format="C" Default="0"/>
+		<Value Name="Penalties" Type="Number" Format="C" Default="0"/>
+		<Value Name="TotalDue" Type="Number" Format="C" Default="0"/>
+		<Value Name="EligibleForUpgrade" Type="Boolean" Default="False"/>
+		<Value Name="EligibleForUnlimited" Type="Boolean" Default="False"/>
+	</Context>
+
+	<!--	The Globals section defines information that is stored independent of interactions. Global values
+		are accessed through the global dictionary component. Defining a global value is similar to defining a context value:
+
+			Name - Identifies the property in automations and in the plug-in configuration.
+			Type - Specifies the property's underlying data type. Valid entries are String, Number, Boolean, and Date.
+			Default - Specifies a default value. The property is populated with this value at system start-up.
+			Format - Controls how the system displays the value. Strings can be formatted as either numbers or dates.
+				Several Numeric options are:
+					"C" for currency
+					"D" for decimal
+					"P" for percent
+				Several Date options are:
+					"d" for short date (month, day, year)
+					"D" for long date (day of week, month, day, year)
+					"m" or "M" for month format (day, month)
+					"y" or "Y" for year format (month, year)
+					"t" for short time (time to minutes)
+					"T" for long time (time to seconds)
+					"g" for short date and time (day, month, year, time to minutes)
+					"G" for long date and time (day, month, year, time to seconds)
+					"u" for universal time
+			-->
+
+	<Globals>
+		<Value Name="AgentName" Type="String" Default=""/>
+		<Value Name="ConversionPercentage" Type="Number" Format="P" Default="0"/>
+		<Value Name="AverageHandleTime" Type="String" Default=""/>
+		<Value Name="AveragePayment" Type="Number" Format="C" Default="0"/>
+	</Globals>
+
+	<!--	An Activity describes a piece of work that needs to done. An automation can request that an activity be performed
+		or perform an activity when requested. Activities are queued and run sequentially. This means that only one activity
+		is processed at a time. Any automation can request that an activity be performed by calling the StartActivity method
+		from the Activity component. The activity is placed at the end of the queue and will be processed when all activities in
+		front of it are completed. An activity is completed when all automations that are listening to Activity.ActivityStarted
+		have finished their execution.
+
+			Name - Provides a descriptive name of an activity.  The activity component uses this name for identification.
+			Value - Specifies the parameters and properties of an activity.
+			Type - Specifies the type of the Value, such as Boolean or String.
+			RequiresInteraction - Specifies if an interaction needs to be active for the
+				activity to run. The defaults is True.
+
+			In the example below, the AddPlan activity will have a StartActivity() method with
+			two parameters: PlanType and EffectiveDate.
+			When used in automations, there will also be an ActivityStarted event with PlanType and EffectiveDate outputs.
+			Additionally, an activity component for AddPlan will have a PlanType property
+			and an EffectiveDate property. These property values can be set or retrieved during the execution
+			of the activity or in response to the ActivityCompleted event.
+
+			<Activity Name="AddPlan" RequiresInteraction="True">
+				<Value Name="PlanType" Type="String"/>
+				<Value Name="EffectiveDate" Type="Date"/>
+			</Activity>
+
+			When defining an activity, make sure that all the data required to perform the
+			activity is available through context values or the activity’s properties.
+			-->
+
+	<Activities>
+		<Activity Name="ValidateCaller">
+			<Value Name="CallerValid" Type="Boolean"/>
+		</Activity>
+		<Activity Name="UnvalidateCaller">
+			<Value Name="CallerValid" Type="Boolean"/>
+		</Activity>
+		<Activity Name="AddPlan">
+			<Value Name="PlanType" Type="String"/>
+			<Value Name="EffectiveDate" Type="String"/>
+		</Activity>
+		<Activity Name="CloseAccount">
+			<Value Name="EffectiveDate" Type="String"/>
+		</Activity>
+		<Activity Name="ProcessClaim">
+			<Value Name="ClaimNum" Type="String"/>
+			<Value Name="ClaimDate" Type="String"/>
+		</Activity>
+		<Activity Name="ProcessClaim">
+		</Activity>
+	</Activities>
+
+	<!--  Plug-ins are HTML user interface sections in the toolbar. Agile Desktop includes these plug-ins:
+			- 360 View - Provides access to key customer information at a glance.
+			- Notes - Lets you add notes and search historic notes.
+			- Shortcuts - Provides buttons to launch an exe, go to a web site, execute an automation,
+				or start an activity.
+			- Interaction Manager - Provides a list of all current interactions on top of the 360 View.
+			- Start Interaction - Provides a way for the Agile Desktop user to enter a string which can be
+				retrieved in an automation and used for starting an interaction.
+		  GENERIC PLUG-IN SETTINGS
+
+				Plugin:IsActive - Indicates if the plug-in appears in the toolbar.
+				Plugin:HasExtendedView - Indicates if the plug-in can be expanded to show more information.
+				Plugin:EnableWithNoActiveInteraction - Indicates if the user can interact with the plug-in when
+					there is no active interaction.
+				Plugin:CanHide - If False, the user cannot hide the plug-in from the gear menu.
+				-->
+
+	<Plugins>
+
+		<!--	360 View - This plug-in displays interaction context values that may be needed at a glance.
+
+			PLUG-IN SPECIFIC SETTINGS
+
+				Plugin/Section   - Provides a logical grouping of the elements within the Plug-In.
+					**NOTE** - <section> tag is case insensitive.
+				Plugin/Section:Visibility - You can choose from these options:
+					Primary - The Section is added to the Primary view.
+					Extended - The Section is added to the Extended view.
+					Both - The Section is added to both the Primary and Extended views.
+				Plugin/Section:Name - Indicates the style in which the section data is displayed. You can choose from these options:
+					Images, Identity, Ratings, Products, Custom, Balances, Eligibility, or Information.
+					**NOTE** - Item containing Image will only appear in section with Name attribute set to Images.
+				Plugin/Section:Label - An optional label that can appear at the top of the section.
+				Plugin/Section:InnerLabel - An optional smaller label that ONLY appears on top of "Information" section. Default value is "Contact Information".
+				Plugin/Section:Divider - A true/false value that determines if a divider line will appear above the section.
+				Plugin/Section:ImagePadding - Specify the padding between images in the Images section. Default padding is 24 pixels.
+					**NOTE** - ImagePadding is optional, ONLY accepts numbers, ONLY works in Images section. If empty, default padding size will be used.
+				Plugin/Section/Item:Name - Identifies the item in the plugin
+				Plugin/Section/Item:Image - Specify the name of the image to be displayed.
+					1) To use default icons, choose from the following default values
+						Cash, Check, MoneyOrder, Credit
+					2) To use custom images, follow these steps below:
+						1. Add your images to the startup automation project.
+							Or, put images in a local folder and add  <CustomImagePath value="C:\path\to\your\pic\folder" /> to RuntimeConfig.xml <AgileDesktop /> section.
+						2. Put your image name as the value of Image attribute. Make sure to only use (.png) images and include the file extension.
+				Plugin/Section/Item:Tooltip - Enter a text you want to appear when mouse over image. Only works with image item.
+				Plugin/Section/Item:TextWrap - Set to true if you want the text in that Item to wrap to the next line, instead of truncate. Default is False.
+					**NOTE** - TextWrap option must be in the Item element, and only works with items in "Products", "Balances", and "Custom" Sections.
+				Plugin/Section/Item:TextAlign - Set the text alignment in an Item, whether left or right. Only works with items in "Custom" Sections. Default is Left.
+				Plugin/Section/Item/Context:Name - Specifies the name of context value (defined in the Context section) used to populate
+					this item. As the associated context property value changes, this item is automatically updated.
+				Plugin/Section/Item/Label - Defines the text label that appears in the toolbar. If omitted,
+					the Name value is used.
+				Plugin/Section/Item/Visible:Criteria - Specifies if an item will be displayed based on a context value, and comparison expression.
+					For examle, add <Visible Criteria="SocialInfluence gt 3"/> to an item, will only display the item if SocialInfluence context value is greater than 3.
+
+				**NOTE** - Every Item in the 360AppBar Plugin can be set up as clickable shortcut, instructions are shown below.
+				Plugin/Section/Item:ShortcutType - Indicates type of shortcut. Choose from these options:
+					* Activity - Starts an activity.
+					* Url - Goes to a web page.
+					* External - Starts an executable.
+					* Automation - Starts an automation.
+				Plugin/Section/Item:ActivityName - For Activity shortcuts, enter the name of the activity that should start when the
+					Item is clicked.
+				Plugin/Section/Item:Target - Enter the destination for the shortcut. For instance, if the shortcut is a web site, you
+					enter the URL. If the shortcut launches an executable file, enter the name of that file.
+				Plugin/Section/Item:Project - For automation shortcuts, enter the name of the project that contains the automation. If the
+					project name contains a space replace it here with an underscore. My Project should become My_Project.
+				Plugin/Section/Item:AutomationName - For automation shortcuts, enter the name of the automation that should start when the
+					Item is clicked. If the automation name contains a space replace it here with an underscore. My Automation should become My_Automation.
+					This automation should have an entry point, and parameters can be passed into entry point if needed.
+				Plugin/Section/Item:Params - For passing parameters into automation entry point. Only use it when Shortcut type is "Automation".
+					Separate multiple parameters by comma.
+					Parameters will be passed in the order as they appear here.
+					* Context. - Prefix with Context. to use context values defined in the Context section of this document.
+					* Globals. - Prefix with Globals. to use global values defined in the Globals section of this document.
+					* Interaction.ActiveKey - Use this keyword to pass in the current active interaction key.
+					* "  " - Use double quotes to pass string literal into entry point. However the value string for the whole Params attribute should be in single quotes.
+					* '  ' - Use single quotes to pass string literal into entry point. However the value string for the whole Params attribute should be in double quotes.
+						**NOTE** - Use #apos; for apostrophe ('), and #quot; for quote (") inside string literal. Use regular HTML entities for other special characters if there is a XML syntax error.
+						**NOTE** - If no active interaction, "Context." and "Interaction.ActiveKey" will be passed as null value
+				-->
+
+		<Plugin Name="360AppBar" Label="360 View" IsActive="True" HasExtendedView="True" CanHide="False" EnableWithNoActiveInteraction="False">
+			<Section Name="Identity" Visibility="Primary">
+				<Item Name="FullName"  ShortcutType="Automation" Project="AgileDesktopExampleProject" AutomationName="MyAutomation">
+					<Context Name="ClientFullName"/>
+					<Label></Label>
+				</Item>
+			</Section>
+			<Section Name="Ratings" Visibility="Primary">
+				<Item Name="SocialInfluence" ShortcutType="Automation" Project="AgileDesktopExampleProject" 
+					AutomationName="MyAutomation" Params="Context.ClientFullName, Globals.AgentName, 'It#apos;s a string...' , Interaction.ActiveKey">
+					<Context Name="SocialInfluence"/>
+					<Label>Social Influence</Label>
+					<MaxValue>5</MaxValue>
+					<Visible Criteria="SocialInfluence eq 0"/>
+				</Item>
+				<Item Name="LifetimeValue">
+					<Context Name="LifetimeValue"/>
+					<Label>Lifetime Value</Label>
+					<MaxValue>5</MaxValue>
+				</Item>
+			</Section>
+			<Section Name="Images" Visibility="Both" Divider="True" Label="Default Images Padding"  ImagePadding="24">
+				<Item Image="Cash" Tooltip="Cash Default Icon" ShortcutType="Activity" ActivityName="MyActivity"/>
+				<Item Image="Check" Tooltip="Check Default Icon" ShortcutType="Url" Target="http://www.openspan.com"/>
+				<Item Image="MoneyOrder"/>
+				<Item Image="Credit">
+					<Visible Criteria="SocialInfluence eq 0"/>
+				</Item>
+				<Item Image="MyCustomImage.png"/>
+			</Section>
+			<Section Name="Images" Visibility="Both" Divider="True" Label="Custom Images Padding" ImagePadding="40">
+				<Item Image="Cash"/>
+				<Item Image="Check"/>
+				<Item Image="MoneyOrder"/>
+				<Item Image="Credit"/>
+			</Section>
+			<Section Name="Products" Visibility="Primary" Label="Products Section Label" Divider="True">
+				<Item Name="VoicePlan" ShortcutType="External" Target="notepad.exe">
+					<Context Name="VoicePlan"/>
+					<Label>Voice Plan</Label>
+				</Item>
+				<Item Name="TextPlan" TextWrap="False">
+					<Context Name="TextPlan"/>
+					<Label>Text Plan</Label>
+				</Item>
+				<Item Name="DataPlan" TextWrap="True">
+					<Context Name="DataPlan"/>
+					<Label>Data Plan</Label>
+				</Item>
+			</Section>
+			<Section Name="Custom" Visibility="Primary" Label="Custom Section Label" Divider ="true">
+			<Item Name="CustomAlignRight" TextWrap ="False" TextAlign="Right">
+					<Context Name="Email1"/>
+					<Label>Demo Align Right</Label>
+			</Item>
+			<Item Name="CustomAlignLeft" TextAlign="Left">
+					<Context Name="Email2"/>
+					<Label>Demo Align Left</Label>
+			</Item>
+			</Section>
+			<Section Name="Balances" Visibility="Extended" Divider="true" Label="Balances">
+				<Item Name="Current">
+					<Context Name="CurrentCharges"/>
+					<Label>Current</Label>
+				</Item>
+				<Item Name="Past">
+					<Context Name="PastDue"/>
+					<Label>Past</Label>
+				</Item>
+				<Item Name="Penalties">
+					<Context Name="Penalties"/>
+					<Label>Penalties</Label>
+				</Item>
+				<Item Name="Total">
+					<Context Name="TotalDue"/>
+					<Label>Total</Label>
+				</Item>
+			</Section>
+			<Section Name="Eligibility" Visibility="Extended">
+				<Item Name="Upgrade">
+					<Context Name="EligibleForUpgrade"/>
+					<Label>Upgrade</Label>
+				</Item>
+				<Item Name="Unlimited">
+					<Context Name="EligibleForUnlimited"/>
+					<Label>Unlimited</Label>
+				</Item>
+			</Section>
+			<Section Name="Information" Visibility="Extended" Divider="True" InnerLabel="Information Inner Label" Label="Information Section Label">
+				<Item Name="Phone1">
+					<Context Name="Phone1"/>
+					<Label></Label>
+				</Item>
+				<Item Name="Phone2">
+					<Context Name="Phone2"/>
+					<Label></Label>
+				</Item>
+				<Item Name="Phone3">
+					<Context Name="Phone3"/>
+					<Label></Label>
+				</Item>
+				<Item Name="Email1">
+					<Context Name="Email1"/>
+					<Label></Label>
+				</Item>
+				<Item Name="Email2">
+					<Context Name="Email2"/>
+					<Label></Label>
+				</Item>
+				<Item Name="Email3">
+					<Context Name="Email3"/>
+					<Label></Label>
+				</Item>
+				<Item Name="Address1">
+					<Context Name="Address1"/>
+					<Label></Label>
+				</Item>
+				<Item Name="Address2">
+					<Context Name="Address2"/>
+					<Label></Label>
+				</Item>
+				<Item Name="City">
+					<Context Name="City"/>
+					<Label></Label>
+				</Item>
+				<Item Name="State">
+					<Context Name="State"/>
+					<Label></Label>
+				</Item>
+				<Item Name="Zipcode">
+					<Context Name="Zipcode"/>
+					<Label></Label>
+				</Item>
+			</Section>
+		</Plugin>
+
+		<!--	NOTES - This plug-in lets you add predefined notes, manually enter notes, and review the historical notes for
+			an interaction. The name of this plug-in is Notes. To interact with this plug-in through an automation, use the NotesController component.
+
+			PLUG-IN SPECIFIC SETTINGS
+
+				Section/Item:Name - Specifies the name of the item to add to the plug-in.
+				Section/Item:IsActive - Determines whether the template appears on a menu.
+				Section/Item:Content - Specifies the format of the template. To include context values, place the desired
+					context value name inside two braces, as shown here: {{example}}. As the associated context property value changes,
+					this item is updated on the menu and when added to a Note.
+				Section/Item:Activity - Specifies that this note will be added when the activity you specify completes.
+				Config/TimeZone - Specifies the time zone used to format dates for notes.
+				Config/LineBreak - Specifies the line break format for notes.
+				Config/NoteCharacterLimit - Specifies max number of characters allowed per note. The Enter key will be counted as provided by Line break Setting.
+											If this element is left blank or removed, no character limit will be enforced.
+
+				-->
+
+		<Plugin Name="Notes" IsActive="True" HasExtendedView="True" CanHide="True" EnableWithNoActiveInteraction="False">
+			<Section Name="NoteTemplates">
+				<Item Name="CallStarted" IsActive="True">
+					<Content>Call with {{ClientFullName}} started</Content>
+				</Item>
+				<Item Name="InformDueAmount" IsActive="True">
+					<Content>Informed of {{TotalDue}} due amount</Content>
+				</Item>
+				<Item Name="Hidden Note" IsActive="False">
+					<Content>This note is hidden</Content>
+				</Item>
+				<Item Name="Note With Activity" IsActive="True">
+					<Content>Note added with the validate caller activity</Content>
+					<Activity>ValidateCaller</Activity>
+				</Item>
+			</Section>
+			<Config>
+				<TimeZone>GMT-5</TimeZone>
+				<LineBreak>\r\n</LineBreak>
+				<NoteCharacterLimit></NoteCharacterLimit>
+			</Config>
+		</Plugin>
+
+		<!--
+			SHORTCUTS - This plug-in provides shortcut buttons for calling an automation, going to a web page,
+			starting an executable, or starting an activity.
+
+			PLUG-IN SPECIFIC SETTINGS
+
+				Plugin/Label - Defines the heading text that appears for this section. The default is Quick Links.
+				Plugin/Config/Layout - Defines the number of columns in which shortcuts are displayed (2 or 3).
+				Plugin/Config/VisibleRows - Defines the initial number of rows to display.
+				Plugin/Section/Name - Specifies the name of shortcut Section. This description does not appear in the Agile Desktop UI.
+				Plugin/Section/Item:Name - Enter the text you want to appear on the shortcut button. This will appear on one row vertically centered.
+				Plugin/Section/Item:RowOneLabel - Text that appears on upper half of shortcut button. This is an alternative to Name attribute.
+				Plugin/Section/Item:RowTwoLabel - Text that appears on lower half of shortcut button. This is an alternative to Name attribute.
+				Plugin/Section/Item:ShortcutType - Indicates type of shortcut. Choose from these options:
+					* Activity - Starts an activity.
+					* Url - Goes to a web page.
+					* External - Starts an executable.
+					* Automation - Starts an automation.
+					* DropdownMenu - Shows a dropdown menu for more options.
+				Plugin/Section/Item:ActivityName - For Activity shortcuts, enter the name of the activity that should start when the
+					button is clicked.
+				Plugin/Section/Item:Target - Enter the destination for the shortcut. For instance, if the shortcut is a web site, you
+					enter the URL. If the shortcut launches an executable file, enter the name of that file.
+				Plugin/Section/Item:Project - For automation shortcuts, enter the name of the project that contains the automation. If the
+					project name contains a space replace it here with an underscore. My Project should become My_Project.
+				Plugin/Section/Item:AutomationName - For automation shortcuts, enter the name of the automation that should start when the
+					button is pressed. If the automation name contains a space replace it here with an underscore. My Automation should become My_Automation.
+					This automation should have an entry point, and parameters can be passed into entry point if needed.
+				Plugin/Section/Item:Params - For passing parameters into automation entry point. Only use it when shortcut type is "Automation".
+					Separate multiple parameters by comma.
+					Parameters will be passed in the order as they appear here.
+					* Context. - Prefix with Context. to use context values defined in the Context section of this document.
+					* Globals. - Prefix with Globals. to use global values defined in the Globals section of this document.
+					* Interaction.ActiveKey - Use this keyword to pass in the current active interaction key.
+					* "  " - Use double quotes to pass string literal into entry point. However the value string for the whole Params attribute should be in single quotes.
+					* '  ' - Use single quotes to pass string literal into entry point. However the value string for the whole Params attribute should be in double quotes.
+						**NOTE** - Use #apos; for apostrophe ('), and #quot; for quote (") inside string literal. Use regular HTML entities for other special characters if there is a XML syntax error.
+						**NOTE** - If no active interaction, "Context." and "Interaction.ActiveKey" will be passed as null value
+				plugin/Section/Item/Enabled:Criteria - Specifies if a shortcut button will be enabled based on the results of a logical expression.  Context values and Globals dictionary items can be
+					used in the expression.  For example, for enabling buttons which lead to updating customer records have an Interaction Context value called "ValidatedCaller" of type Boolean and use,
+					<Enabled Criteria="ValidatedCaller"/> OR <Enabled Criteria="ValidatedCaller Eq 'True'"/>.  The default Criteria will evaluate to true and be enabled.
+				plugin/Section/Item/Visible:Criteria - Specifies if a shortcut button will be visible based on the results of a logical expression.  Context values and Globals dictionary items can be
+					used in the expression.  For example, for showing/hiding buttons which lead to updating customer records have an Interaction Context value called "ValidatedCaller" of type Boolean and use,
+					<Visible Criteria="ValidatedCaller"/> OR <Visible Criteria="ValidatedCaller Eq 'True'"/>.  The default Criteria will evaluate to true and be visible.
+					** Note ** Care should be used when using this option as disappearing and shifting buttons can lead to a poor user experience.
+				Plugin/Section/Item/MenuItem - Specify a pop-up menu item inside the DropdownMenu element.
+				-->
+
+		<Plugin Name="Shortcuts" IsActive="True" HasExtendedView="False" CanHide="True" EnableWithNoActiveInteraction="True" Label="Quick Links">
+			<Config>
+				<Layout>2</Layout>
+				<VisibleRows>2</VisibleRows>
+			</Config>
+			<Section Name="Links" Visibility="Primary">
+				<Item Name="Validate Caller" ActivityName="ValidateCaller" ShortcutType="Activity"/>
+				<Item RowOneLabel="OpenSpan" RowTwoLabel="Web Site" Target="http://www.openspan.com/" ShortcutType="Url">
+					<Visible Criteria="SocialInfluence eq 0" />
+				</Item>
+				<Item Name="Send Alert" Project="AgileDesktopExampleProject" AutomationName="Alert" ShortcutType="Automation"/>
+				<Item Name="Notepad" Target="Notepad" ShortcutType="External">
+					<Enabled Criteria="SocialInfluence eq 0" />
+				</Item>
+				<Item Name="My Dropdown" ShortcutType="DropdownMenu">
+					<MenuItem Name="Validate Caller" ActivityName="ValidateCaller" ShortcutType="Activity"/>
+					<MenuItem Name="Send Alert" Project="AgileDesktopExampleProject" AutomationName="Alert" ShortcutType="Automation"/>
+				</Item>
+				<Item Name="Params Style 1" Project="AgileDesktopExampleProject" AutomationName="MyAutomation" ShortcutType="Automation"
+					Params='Context.ClientFullName, Globals.AgentName, "It#apos;s a string..." , Interaction.ActiveKey'/>
+				<Item Name="Params Style 2" Project="AgileDesktopExampleProject" AutomationName="MyAutomation" ShortcutType="Automation"
+					Params="Context.ClientFullName, Globals.AgentName, 'This #quot; is a quote demo' , Interaction.ActiveKey"/>
+			</Section>
+		</Plugin>
+
+		<!--	InteractionManager - This plug-in displays a list from which you can select the active interaction, close an
+			interaction, or optionally start an interaction.
+
+			PLUG-IN SPECIFIC SETTINGS
+
+				Section/Item/Context Name - Enter the context property you want to appear in the list from which the end user  will
+				   select the new active interaction. For instance, if there is a context property named ClientFullName and you want your
+				   end users to select an interaction based on the client's name, you would enter ClientFullName here.
+				Config/EnableStartInteraction - Enter True if you want to show a plus (+) button to let the end user start an
+				   interaction.
+				-->
+
+		<Plugin Name="InteractionManager" IsActive="False">
+			<Section Name="Selector" Visibility="Primary">
+				<Item Name="InteractionName">
+					<Context Name="ClientFullName"/>
+					<Label/>
+				</Item>
+			</Section>
+			<Config>
+				<EnableStartInteraction>True</EnableStartInteraction>
+			</Config>
+		</Plugin>
+
+		<!--	StartInteraction - This plug-in displays a modal dialog which lets end-users enter a string and start a search. The string is made available in an automation and the automation developer can use this information to start a new interaction.
+
+			PLUG-IN SPECIFIC SETTINGS
+
+				EnableWithNoActiveInteraction - Enter True if you want to display the StartInteraction dialog when no
+					interactions exist.
+				Config/Label - Enter the text you want to appear on the dialog's heading.  This text should describe what the
+					end user needs to do to start a new interaction. Here is an example: Enter Claim Number.
+				Config/Project - Enter the name of the OpenSpan project that contains the automation which starts a new
+					interaction.
+				Config/Automation - Enter the name of the automation which starts the interaction. This automation can validate
+					user input and start an interaction by calling InteractionManager.StartInteraction(). This automation should have one input parameter of type String (the text entered by the end user), one output parameter of type String (a Message displayed if an error occurs), and should return a Boolean result (return False if an error message should be displayed).
+				Config/DefaultErrorMessage - Enter the text of the message you want to display if an error occurs while validating the input or starting
+					the interaction. This will be used if the start interaction automation does not return the error text but does return False.
+				-->
+
+		<Plugin Name="StartInteraction" IsActive="False" EnableWithNoActiveInteraction="True">
+			<Config>
+				<Label>Enter Claim Number</Label>
+				<Project>AgileDesktopExampleProject</Project>
+				<Automation>StartInteraction</Automation>
+				<DefaultErrorMessage>Unable to start interaction</DefaultErrorMessage>
+			</Config>
+		</Plugin>
+	</Plugins>
+</Interaction>

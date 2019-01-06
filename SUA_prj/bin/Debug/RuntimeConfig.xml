@@ -1,0 +1,660 @@
+<manifest>
+  <!-- Provides configuration section redirects from a given section to a new one. -->
+  <!-- Product version range specifies which product versions the redirect is applicable to. -->
+  <ConfigRedirect>
+    <ConfigSection from="DeploymentReferences" to="DeploymentReferences_8_0" productVersion="8.0-999.0" />
+    <ConfigSection from="TypeResolution" to="TypeResolution_8_0" productVersion="8.0-999.0" />
+  </ConfigRedirect>
+  <Diagnostics mode="on" hook_unhandled_exception="on" hook_trace="on" hook_debug="on" trace_level="4">
+    <!--
+			Email exception information
+			"to": coma separated list of email addresses
+			-->
+    <email mode="off" subject="Exception Information" server="" from="" to="" />
+    <logController mode="on" />
+    <publisher mode="off" trace_mode="on" exception_mode="on" assembly="OpenSpan" type="OpenSpan.Diagnostics.Publishers.FilePublisher" fileName="RuntimeLog.txt" filesToKeep="1" initMode="ClearLog" />
+    <publisher mode="off" trace_mode="on" exception_mode="on" assembly="OpenSpan" type="OpenSpan.Diagnostics.Publishers.TracePublisher" fileName="STDiagnosticLog.txt" txtOutput="off" xmlOutput="on" deleteLogs="on" logProcessorProgress="on" logProcessor="on" />
+    <publisher mode="off" trace_mode="on" exception_mode="on" assembly="OpenSpan" type="OpenSpan.Diagnostics.Publishers.OutputWindowPublisher" />
+    <publisher mode="off" trace_mode="on" exception_mode="on" assembly="OpenSpan" type="OpenSpan.Diagnostics.Publishers.Log4NetPublisher">
+      <!-- Settings for Runtime Log4Net logging -->
+      <appender name="RollingFileAppender" type="log4net.Appender.RollingFileAppender, log4net">
+        <!-- Name to save the log file to -->
+        <file type="log4net.Util.PatternString" value="%property{ConfigurationDirectory}/%property{ProgramShortName}_Log4Net.txt" />
+        <!-- Set whether to create a new file every run (backing up old ones) -->
+        <appendToFile value="false" />
+        <!-- Set the maximum size of each log file -->
+        <rollingStyle value="Size" />
+        <maximumFileSize value="10MB" />
+        <!-- Maximum files to back up, will be named filename.1, filename.2, ..., filename.n -->
+        <maxSizeRollBackups value="5" />
+        <staticLogFileName value="true" />
+        <!-- Allow multiple instances to log to the same file -->
+        <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+        <layout type="log4net.Layout.PatternLayout">
+          <conversionPattern value="%-5level | %date | %7.7thread | %message%newline" />
+        </layout>
+      </appender>
+      <root>
+        <!-- You can enter ERROR, WARN, INFO, DEBUG, ALL, or OFF.  ALL and DEBUG provide the same results.  FATAL means nothing will be logged. -->
+        <level value="DEBUG" />
+        <appender-ref ref="RollingFileAppender" />
+      </root>
+    </publisher>
+  </Diagnostics>
+  <!-- secondsForIdle: Number of seconds of inactivity before the user is considered to be in an idle state -->
+  <!-- secondsForIdlePrompt Number of seconds of inactivity before the user will be prompted to enter a reason through the Off Computer Time dialog -->
+  <!-- secondsForIdleHeartbeat: Number of seconds during an inactive period for which an event is sent to OpenSpan Intelligence proving the connection is still established but system is idle -->
+  <!-- useEventHost: Mouse and keyboard events are collected in the EventHost process.  Defaults to true -->
+  <!-- autoRestartEvent: If Runtime is active EventHost is restarted if shutdown for any reason.  Defaults to true -->
+  <!-- eventHostShutdownTimeout: Number of milliseconds Runtime will wait for EventHost to shutdown nicely before killing it -->
+  <!-- limitData: Limit the event metadata sent that might contain sensitive data such as the Window's title and the browser's URL -->
+  <HighLevelEvents disabled="true" captureEvents="true" secondsForIdle="600" secondsForIdlePrompt="600" secondsForIdleHeartbeat="300" uiProcessesOnly="true" ignoreRuntimeProcess="true" useEventHost="true" autoRestartEventHost="true" eventHostShutdownTimeout="1000" limitData="true">
+    <AppFocusEvents enabled="true" />
+    <FormFocusEvents enabled="true" />
+    <PageFocusEvents enabled="true" />
+    <TopWindowEvents enabled="true" />
+    <UrlChangedEvents enabled="true" />
+    <SystemLockedEvents enabled="true" />
+    <ScreenSaverEvents enabled="true" />
+    <IdleEvents enabled="true" />
+    <ProcessEvents enabled="true" />
+  </HighLevelEvents>
+  <!-- Operational Event Service configuration settings -->
+  <!--   Operational events are sent to the Management Console server for reporting purposes. -->
+  <!--   Enabled: Indicates if any Operational events should be sent. -->
+  <!--   UsageStatistics.Enabled: Indicates if the Automation and Activity Usage Statistics event should be sent. -->
+  <!--   UsageStatistics.PublishInterval: Number of minutes between usage statistics events. -->
+  <!--   HealthStatistics.Enabled: Indicates if the Health Report related statistics should be sent to OMC. This includes Logins, Runtime version, package name & version, fatal exceptions. -->
+  <OperationalEvents enabled="false">
+    <HealthStatistics enabled="false" />
+    <UsageStatistics enabled="false" publishInterval="60" />
+  </OperationalEvents>
+  <!-- This section specifies settings for RDA (Robotic Desktop Automation) and RPA (Robotic Process Automation) integration with Pega application.-->
+  <Robotics>
+    <!-- LocalApiService tag is specific to RDA. -->
+    <!--   enabled: If true, the Runtime will self host a REST service to accept requests from the Pega application. -->
+    <!--   SSL: If true, the service uses SSL and must be accessed via https. -->
+    <!--   port: Port the service will listen on. -->
+    <!--   allowedOrigins: Comma delimited list of domains that the service will accept requests from. -->
+    <!--          A specific domain can be given (i.e. acme.pega.com) or the subdomain may be wildcarded (i.e. *.pega.com) -->
+    <!--          Requests from any domain not in this list will be rejected. -->
+    <!--   JWTSecurity: If true, enhanced security is enabled that required signed JWT tokens with every RDA request to Runtime -->
+    <!--   PegaServerURL : If JWT Security is enabled, this URL is used to retrieve the JWT profile public key used to validate RDA requests -->
+    <LocalApiService enabled="true" SSL="true" port="9443" allowedOrigins="*.pega.com" JWTSecurity="true" PegaServerURL="https://MyPegaServer.com/RobotMgr" />
+    <!-- PackageServer baseUrl: Address of the Package Server API endpoint. -->
+    <PackageServer baseUrl="http://MyPackageServer.com" />
+  </Robotics>
+  <!-- This section specifies the signature validation required for deployment packages -->
+  <!-- signatureCheck specifies the type of validation to perform -->
+  <!-- 		None - Signature is not checked.  Unsigned packages can be loaded. -->
+  <!-- 		Any - Signature is required, but can be signed by any certificate as long as that certificate exists in the Cert Store. -->
+  <!-- 		ApprovedOnly - Signature is required, and must be signed by a cert in the approved list -->
+  <DeploymentSecurity signatureCheck="None">
+    <ApprovedCertificates>
+      <Certificate storeLocation="" storeName="" subject="" />
+      <!-- <Certificate storeLocation="LocalMachine" storeName="Root" subject="CN=DigiCert Assured ID Root CA, OU=www.digicert.com, O=DigiCert Inc, C=US"/> -->
+    </ApprovedCertificates>
+  </DeploymentSecurity>
+  <AppSettings>
+    <!-- ContextResponseTimeout key is used to set the amount of time a context will wait for a response from a remote context -->
+    <add key="ContextResponseTimeout" value="35000" />
+    <add key="StartupProject" value="" />
+    <add key="SingleCopy" value="true" />
+    <!-- Number of milliseconds Runtime will try to exit cleanly before issuing Environment.Exit() -->
+    <add key="RuntimeShutdownTimeout" value="10000" />
+    <!-- If CanRunMultiplePackages is false and multiple packages are assigned in OMC the user will be prompted for which package to load. -->
+    <!-- If CanRunMultiplePackages is true all packages assigned in OMC will be loaded by Runtime. -->
+    <add key="CanRunMultiplePackages" value="false" />
+    <add key="SecondaryAppDomain" value="false" />
+    <!-- Keys used to hide the runtime system tray icon and define a system level hot key to toggle its display -->
+    <add key="ShowSystemTrayIcon" value="true" />
+    <add key="ShowSystemTrayIconHotKey" value="Alt+Ctrl+Shift+Windows+O" />
+    <!-- We look for tray icon file name w/o path in: application and user documents folder -->
+    <add key="TrayIconFileName" value="" />
+    <!-- Serializer -->
+    <add key="IgnoreRuntimeDeserializationErrors" value="false" />
+    <!-- Deployment -->
+    <add key="DeploymentPackageExtension" value=".OpenSpan" />
+    <add key="DeploymentManifestExtension" value=".manifest" />
+    <add key="DeploymentSaveToDisk" value="true" />
+    <!-- Deployment files matching any regex pattern in this list will not be extracted at Runtime -->
+    <add key="DeploymentExcludeExtractPatterns" value="OpenSpan.Translators.*.dll, OpenSpan.Adapters.*.dll" />
+    <!-- 'DeploymentExtractDirectory' value format:                                     -->
+    <!-- "" or "%LocalApplicationData%" - user's profile local application data folder  -->
+    <!-- "%TEMP%" - user's profile local temporary folder                               -->
+    <!-- "<Path>" - where <Path> is actual extraction folder path                       -->
+    <add key="DeploymentExtractDirectory" value="" />
+    <!-- Should Runtime be allowed to run without package.  Setting to true may be required in HLE-only environments that do no automations. -->
+    <add key="AllowRunWithNoPackage" value="false" />
+    <!-- Controls Runtime start-up behavior when server connectivity fails -->
+    <!--	Always: Runtime will continue without prompting the user. -->
+    <!--	Prompt: User is prompted to Continue or Exit. -->
+    <!--	Never: Runtime notifies user and Exits. -->
+    <add key="AllowRunOffline" value="Always" />
+    <!-- Should runtime show the 'Connecting to Server' bar when connecting to a server -->
+    <add key="DisplayConnectionStatus" value="true" />
+    <!-- Web Service -->
+    <add key="LogSoapExtension" value="false" />
+    <!-- Design Component -->
+    <add key="DesignComponentStopTimeout" value="5000" />
+    <!-- Suppresses messages to the Notification Service -->
+    <add key="SuppressNotifications" value="false" />
+    <!-- Suppresses unhandled adapter exceptions.  Values:                              -->
+    <!--   "true"  - Adapter exceptions will be logged but not shown to the user.       -->
+    <!--   "false" - Adapter exceptions shown to the user.  The user can then choose to -->
+    <!--             either shutdown the adapter or continue running.                   -->
+    <add key="SuppressAdapterExceptions" value="false" />
+    <!-- Suppresses display of file access permission errors with manifest files -->
+    <add key="SuppressFileAccessNotifications" value="false" />
+    <!-- Indicates whether runtime project MRU is used or not -->
+    <add key="MRU" value="true" />
+    <!-- Indicates whether WinHllapiHostLog is enabled or not -->
+    <add key="WinHllapiHostLoggingEnabled" value="false" />
+    <!-- (Required for Java dumps) Enter the full path to the jmap utility (jmap.exe) which is part of the JDK 1.6 package. This process captures memory dumps of Java processes. Here is an example:
+			"jmap" value="C:\Program Files\Java\jdk1.6.0_22\bin\jmap.exe
+			Note: Because the jmap utility can sometimes hang, be sure to set the maxwait parameter when capturing Java dumps. -->
+    <add key="jmap" value="" />
+    <!-- Use this key to specify the location of Java console output directory. The default is: %APPDATA%\Sun\Java\Deployment\log
+		 as specified here: http://docs.oracle.com/javase/6/docs/technotes/guides/deployment/deployment-guide/tracing_logging.html#tracing -->
+    <add key="javaconsolepath" value="" />
+    <!-- Use this parameter to tell OSDump what sort of dumps to grab and how to find the correct processes to gather dumps from. You can choose from these mode options:
+		 hang - Include this option to produce dumps for all processes currently in a hung state.
+		 crash - Include this option to produce memory dumps of the process you specify via the pid parameter.
+		 log - Include this option to gather the logs and zip them into a single file. Note that this option does not generate any log files, it only consolidates the log files it finds in the DumpFolder directory into a single, zipped file.
+		 The default is hang. -->
+    <add key="mode" value="hang" />
+    <!-- If you set the mode to crash, use this option to specify the process ID (PID) of the process for which you want to capture a memory dump. 
+		 To find the PID of a process choose Task Manager | View | Select Columns | Check PID (Process Identifier), then find your process and its PID.
+		 If you set the mode to hang or log, the utility ignores this option.
+		 Note: To specify a process name instead of a process ID, use the dumpproc parameter. -->
+    <add key="pid" value="" />
+    <!-- Use this parameter to specify the email address you want to send the dumps to. 
+		 When you specify this parameter, the utility opens the default email client, creates an email with the specified mailto address, and sets the Subject line to:
+		 OSDump created for user <abc> on machine <xyz>
+		 The user and machine information are pulled from the user's machine. You can then add any additional information, attach the appropriate files, and send the email. -->
+    <add key="email" value="" />
+    <!-- Use this parameter to specify the directory that contains any Runtime/Studio logs that you would like to gather. This is also where OSDump will write out all files to.
+		 Must be specified if different from default. If not specified, searches for OpenSpan Studio for Visual Studio 2008 or OpenSpan Studio for Visual Studio 2010 in My Documents and Common Application Data. -->
+    <add key="osdir" value="" />
+    <!-- Use this parameter to specify the directory from where SuperTrace logs are gathered. The utility collects these logs and includes them in the ZIP file it creates.
+		 If you include this parameter, make sure the directory you specify exists. -->
+    <add key="stdir" value="" />
+    <!-- Use this parameter to tell OSDump to collect dumps from any OpenSpan.Runtime process currently running. The default is True. -->
+    <add key="dumprt" value="true" />
+    <!-- Set this parameter to True to tell OSDump to collect dumps from any Studio process currently running. The default is False. -->
+    <add key="dumpst" value="false" />
+    <!-- Include this parameter to tell OSDump to capture dumps of the processes you specify in a semicolon-delimited list. Here is an example:
+		 "dumpproc" value="iexplore;notepad;calc"
+		 Note: To specify a process ID (PID) instead of a process name, use the pid parameter. -->
+    <add key="dumpproc" value="" />
+    <!-- Specify the number of milliseconds to wait for a particular dump to be created.
+		 This is useful when collecting Java dumps because the jmap program can sometimes stop when creating dumps. If the time limit is reached, the dumping processes is cancelled and the utility attempts to continue.
+		 For example, you could set this parameter to 60000 to tell the utility to wait for 60 seconds before killing the Java process and continuing.
+		 Note: Do not set to zero (0) unless you want OSDump to wait indefinitely. -->
+    <add key="maxwait" value="180000" />
+    <!-- Enter True to tell the utility to wait for user input upon exit. The default is False. -->
+    <add key="pauseonexit" value="false" />
+    <!-- Use this parameter to tell OSDump to copy all files located in this semicolon-delimited list of directories into the temp directory for zipping. Here is an example: 
+		 "includedir" value="C:\Documents and Settings\(UserName)\My Documents\OpenSpan Studio for VS 2010\Projects\(ProjectName)"
+		 You could use this, for example, to include project files in the .zip file OSDump creates. -->
+    <add key="includedir" value="" />
+    <!-- Show alert when exiting runtime due to server connection error. -->
+    <add key="ShowExitingRuntime" value="true" />
+    <!-- Version of OpenSpan Office assemblies to use with Runtime. -->
+    <!-- Values: "None", "2002", "2003", "2007", "2010", "2013" or "2016" -->
+    <add key="OfficeVersion" value="2010" />
+    <!-- Determines whether Direct Generic Events should be enabled.  This only applies to technologies that support direct generic events -->
+    <add key="SendDirectGenericEvents" value="true" />
+    <!-- Comma delimited list of case insensitive process names to prevent injection and hooking for. Maximum length 127. -->
+    <add key="IgnoreProcesses" value="" />
+  </AppSettings>
+  <!-- Runtime Windows Tray Menu -->
+  <!--   MenuItem: An entry in the tray popup menu -->
+  <!--     item: Which menu item to display.  Valid values for item are as follows: -->
+  <!--       LoadLocalProject: Menu item for loading local projects -->
+  <!--       LoadWebProject: Menu item for loading web projects -->
+  <!--       Unload: Menu item for unloading projects -->
+  <!--       RecentProjects: Menu item for loading recently accessed projects -->
+  <!--       LoadMostRecent: Menu item for loading the most recently accessed project -->
+  <!--       About: Menu item for displaying the About box -->
+  <!--       ReportProblem: Menu item for reporting a problem -->
+  <!--       DiagnosticConfiguration: Menu item to bring up the diagnostic configuration dialog -->
+  <!--       TestConnection: Menu item for testing connections -->
+  <!--       ShowOutputWindow: Menu item to show the output window -->
+  <!--       ExpectedHours: Menu item to display the Expected Work Hours dialog -->
+  <!--       RPACredentials Menu item to display the dialog to enter RPA Credentials -->
+  <!--       Exit: Menu item to exit Runtime -->
+  <!--       LoadedProjects: Placeholder where running projects will appear -->
+  <!--       Separator: Separator line -->
+  <!--     label: Text that appears in the menu -->
+  <!--     show: true/false to include the item in the menu -->
+  <!-- If enabled to appear, these menu items may still be hidden if the option is not available.  For example, the load project items -->
+  <!-- will not show if connected to OMC and the ExpectedHours option will not show if unavailable. -->
+  <RuntimeTrayMenu>
+    <MenuItem item="LoadLocalProject" label="Load &amp;Local Project..." show="true" />
+    <MenuItem item="LoadWebProject" label="Load &amp;Web Project..." show="true" />
+    <MenuItem item="Unload" label="&amp;Unload" show="true" />
+    <MenuItem item="Separator" show="true" />
+    <MenuItem item="RecentProjects" label="&amp;Recent Projects" show="true" />
+    <MenuItem item="LoadMostRecent" label="Load &amp;Most Recent Project" show="true" />
+    <MenuItem item="Separator" show="true" />
+    <MenuItem item="About" label="&amp;About..." show="true" />
+    <MenuItem item="ReportProblem" label="Report a Problem..." show="true" />
+    <MenuItem item="DiagnosticConfiguration" label="&amp;Diagnostics Configuration..." show="true" />
+    <MenuItem item="TestConnection" label="Test Connection" show="true" />
+    <MenuItem item="ShowOutputWindow" label="&amp;Show Output Window" show="true" />
+    <MenuItem item="Separator" show="true" />
+    <MenuItem item="LoadedProjects" show="true" />
+    <MenuItem item="Separator" show="true" />
+    <MenuItem item="ExpectedHours" label="Update Expected &amp;Hours" show="true" />
+    <MenuItem item="Separator" show="true" />
+    <MenuItem item="RPACredentials" label="Enter RPA Credentials..." show="true" />
+    <MenuItem item="Separator" show="true" />
+    <MenuItem item="Exit" label="E&amp;xit" show="true" />
+  </RuntimeTrayMenu>
+  <!-- Assisted Sign-on configuration settings -->
+  <!--   ShowDialogOnStart: Indicates if the Credential dialog should be shown automatically when runtime starts. -->
+  <!--   StorePassword: Indicates if passwords should be saved to disk when credentials are saved. -->
+  <!--   FileLocation: Path to store the ASO.db file. -->
+  <AssistedSignOn>
+    <ShowDialogOnStart value="false" />
+    <StorePassword value="true" />
+    <FileLocation value="ApplicationData" />
+  </AssistedSignOn>
+  <!-- Start My Day configuration settings -->
+  <!--   AllowLocalApplications: Indicates if Runtime users are allowed to add local exes or web applications as Start My Day applications. -->
+  <!--   ShowPathColumn: Indicates if the Path column will be shown in the Start My Day grid.   -->
+  <!--   FileLocation: Path to store the StartMyDay file. -->
+  <StartMyDay>
+    <AllowLocalApplications value="true" />
+    <ShowPathColumn value="true" />
+    <FileLocation value="" />
+  </StartMyDay>
+  <!-- Intelligence integration options -->
+  <!--   enabled: Indicates if the Intelligence integration should be activated when runtime starts. -->
+  <!--   ExpectedWorkHours/DeductLunch: Should lunch time be deducted from the displayed total in Expected Work Hours screen. -->
+  <!--   OffComputerTime/ReasonCodes: Reason codes to display if Intelligence server does not provide any for Off Computer Time screen. -->
+  <IntelligenceOptions enabled="false">
+    <ExpectedWorkHours>
+      <DeductLunch value="true" />
+    </ExpectedWorkHours>
+    <OffComputerTime>
+      <ReasonCodes value="idle-other=Other,idle-break=Break,idle-lunch=Lunch,idle-assisting-others=Assisting Others,idle-meeting=Meeting,idle-receiving-assistance=Receiving Assistance,idle-training=Training,idle-mail-room=Mail Room,idle-paper-handling=Paper Handling,idle-no-work-available=No Work Available,idle-personal-time=Personal Time,idle-system-issue=System Issue" />
+    </OffComputerTime>
+  </IntelligenceOptions>
+  <!-- Configuration options for the Agile Desktop toolbar -->
+  <!-- 	Url:  Location of the AgileDesktop UI and Plugin files.  May be local directory or url. -->
+  <!-- 	LogoUrl:  Location of the logo image file to display in toolbar.  May be local file location or url. -->
+  <!-- 	UserCanHide:  If true the user can collapse the toolbar to the left side of the desktop. -->
+  <!-- 	UserCanExit:  If true the user can exit the toolbar from the gear menu. -->
+  <!-- 	TopMost:  If true the toolbar will stay on top of other focused applications. -->
+  <!-- 	ReadUITimeout:  The number of milliseconds to attempt to read the UI index.dat file before timing out. -->
+  <!-- 	AccentColor:  Accent color used for theming the toolbar UI. Text values (e.g. Green, LightBlue) 
+			and hex values (e.g. #F19934, #3CB3D1) are accepted. -->
+  <!--	ViewType:  Control the default & available options for the toolbar's view.  Choose from normal, slim, normal_only, and slim_only  -->
+  <!--	CustomImagePath: Location that can hold custom images used in the Images section in 360AppBar plugin -->
+  <AgileDesktop>
+    <Url value="AgileDesktop" />
+    <LogoUrl value="" />
+    <UserCanHide value="true" />
+    <UserCanExit value="true" />
+    <TopMost value="true" />
+    <ReadUITimeout value="10000" />
+    <AccentColor value="#3CB3D1" />
+    <ViewType value="normal_only" />
+    <CustomImagePath value="" />
+  </AgileDesktop>
+  <!-- Runtime shutdown settings -->
+  <Shutdown>
+    <!-- Specifies if Runtime will wait for all automations to complete before terminating. Values: "Immediate", "WaitForAutomations" -->
+    <!--  Immediate - Stop proceeds without waiting for automations to complete -->
+    <!--  WaitForAutomations - Stop will not proceed until all automations have completed. -->
+    <Behavior value="Immediate" />
+  </Shutdown>
+  <!-- The EventConsumers section defines all consumers of Runtime events -->
+  <EventConsumers>
+    <!-- 'enabled' - Consumer is only loaded if enabled is true -->
+    <!-- 'assembly' - The name of the Assembly the consumer type is defined in -->
+    <!-- 'type' - Full type name (including namespace) of Consumer class -->
+    <!-- 'batchSize' - Defines the number of events in a batch for the consumer to process. -->
+    <!-- 'sendFailuresBeforeWaiting' - Number of times Send can fail consecutively before the consumer waits to try sending again. -->
+    <!-- 'waitForRetryTime' - Amount of time in milliseconds to wait before trying to send again after 'sendFailuresBeforeWaiting' limit is reached. -->
+    <!-- 'eventSources' - Comma delimited list of supported event sources.  If empty all event sources are processed. -->
+    <!-- 'serializationVersion' - Indicates which serialization version to use. If not specified latest version is chosen. -->
+    <!-- 'testUser' - Is the user a test user? WFI can be configured to mask window text except for test users. -->
+    <consumer enabled="false" assembly="OpenSpan.Runtime.Analytics" type="OpenSpan.Runtime.Analytics.AnalyticsConsumer" batchSize="10" sendFailuresBeforeWaiting="3" waitForRetryTime="60000" eventSources="" serializationVersion="1.0" testUser="false">
+      <HttpSettings url="" keepAlive="false" timeout="5000" />
+      <RegexRules enabled="true">
+        <!-- 'description' - Description of the rule for self documentation. -->
+        <!-- 'pattern' - RegEx pattern to match. -->
+        <!-- 'replacement' - Value to replace string found by the RegEx pattern. -->
+        <!-- 'fieldNames' - Comma separated list of metadata field names. If specified, only event metadata matching one of the names listed will have the RegEx rule applied. An empty string means that events will be processed without regard to metadata name. -->
+        <!-- 'eventNames' - Comma separated list of event names. If specified, only event events matching one of the names listed will have the RegEx rule applied. An empty string means that events will be processed without regard to event name. -->
+        <!-- 'enabled' - Rule is only applied if enabled is true -->
+        <rule description="SSN masking" pattern="^(?!666|000|9\d{2})\d{3}(-| - | -|- |\/| \/|\/ | \/ | |-/| -/|-/ | -/ )(?!00)\d{2}(-| - | -|- |\/| \/|\/ | \/ | |-/| -/|-/ | -/ )(?!0{4})\d{4}$" replacement="xxx-xx-xxxx" fieldNames="" eventNames="" enabled="true" />
+        <rule description="CCN masking" pattern="(^(4|5)\d{3}-?\d{4}-?\d{4}-?\d{4}|(4|5)\d{15})|(^(6011)-?\d{4}-?\d{4}-?\d{4}|(6011)-?\d{12})|(^((3\d{3}))-\d{6}-\d{5}|^((3\d{14})))" replacement="xxxx-xxxx-xxxx-xxxx" fieldNames="" eventNames="" enabled="true" />
+        <rule description="MACAddress masking" pattern="^[\s\S]*" replacement="XXXXXXXXXXXX" fieldNames="MACAddress" eventNames="" enabled="false" />
+      </RegexRules>
+      <!-- CacheProvider defines what class is responsible to provide caching for this consumer.  Caching is optional. -->
+      <!-- 'assembly' - The name of the Assembly the CacheProvider type is defined in -->
+      <!-- 'type' - Full type name (including namespace) of CacheProvider class -->
+      <!-- 'enabled' - CacheProvider is only loaded if enabled is true -->
+      <!-- 'encrypt' - Indicates if event data should be encrypted before caching.  Defaults to false. -->
+      <!-- 'waitWhenEmpty' - Number of milliseconds to wait before checking the cache contents again if the cache is empty. -->
+      <!-- 'waitOnError' - Number of milliseconds to wait before before attempting to Send events in the cache if there was a Send failure. -->
+      <!-- 'throttleTime' - Number of milliseconds to wait between sending batches.  Can be used to throttle down the rate cache processing. -->
+      <!-- 'dbLocation' - (SQLiteCacheProvider only) Location database file should be stored.  Can be absolute path, special folder or environment variable. -->
+      <!-- 'dbName' - (SQLiteCacheProvider only) Database file name. Multiple cache providers cannot share the same database file.  So 'dbName' must be unique across Event Consumers. -->
+      <!-- 'maxSize' - (SQLiteCacheProvider only) Maximum size in bytes of database file.  As limit is reached oldest events are removed. -->
+      <cacheProvider enabled="true" assembly="OpenSpan.Events" type="OpenSpan.Events.SQLiteCacheProvider" encrypt="false" waitWhenEmpty="60000" waitOnError="60000" throttleTime="0" dbLocation="LocalApplicationData" dbName="EventCache.db" maxSize="20971520" />
+    </consumer>
+    <!-- 'enabled' - Consumer is only loaded if enabled is true -->
+    <!-- 'assembly' - The name of the Assembly the consumer type is defined in -->
+    <!-- 'type' - Full type name (including namespace) of Consumer class -->
+    <!-- 'sendFailuresBeforeWaiting' - Number of times Send can fail consecutively before the consumer waits to try sending again. -->
+    <!-- 'waitForRetryTime' - Amount of time in milliseconds to wait before trying to send again after 'sendFailuresBeforeWaiting' limit is reached. -->
+    <!-- 'eventSources' - Comma delimited list of supported event sources.  If empty all event sources are processed. -->
+    <consumer enabled="false" assembly="OpenSpan.Events" type="OpenSpan.Events.OperationalEvents.OperationalEventConsumer" sendFailuresBeforeWaiting="3" waitForRetryTime="60000" eventSources="Operational">
+      <HttpSettings keepAlive="false" timeout="5000" />
+      <!-- CacheProvider defines what class is responsible to provide caching for this consumer.  Caching is optional. -->
+      <!-- 'assembly' - The name of the Assembly the CacheProvider type is defined in -->
+      <!-- 'type' - Full type name (including namespace) of CacheProvider class -->
+      <!-- 'enabled' - CacheProvider is only loaded if enabled is true -->
+      <!-- 'encrypt' - Indicates if event data should be encrypted before caching.  Defaults to false. -->
+      <!-- 'waitWhenEmpty' - Number of milliseconds to wait before checking the cache contents again if the cache is empty. -->
+      <!-- 'waitOnError' - Number of milliseconds to wait before before attempting to Send events in the cache if there was a Send failure. -->
+      <!-- 'throttleTime' - Number of milliseconds to wait between sending batches.  Can be used to throttle down the rate cache processing. -->
+      <!-- 'dbLocation' - (SQLiteCacheProvider only) Location database file should be stored.  Can be absolute path, special folder or environment variable. -->
+      <!-- 'dbName' - (SQLiteCacheProvider only) Database file name. Multiple cache providers cannot share the same database file.  So 'dbName' must be unique across Event Consumers. -->
+      <!-- 'maxSize' - (SQLiteCacheProvider only) Maximum size in bytes of database file.  As limit is reached oldest events are removed. -->
+      <cacheProvider enabled="true" assembly="OpenSpan.Events" type="OpenSpan.Events.SQLiteCacheProvider" encrypt="false" waitWhenEmpty="60000" waitOnError="60000" throttleTime="0" dbLocation="LocalApplicationData" dbName="OperationalEventCache.db" maxSize="20971520" />
+    </consumer>
+    <!-- 'enabled' - Filter is only loaded if enabled is true -->
+    <!-- 'assembly' - The name of the Assembly the Filter is defined in -->
+    <!-- 'type' - Full type name (including namespace) of Filter class -->
+    <!-- 'whitelist' - Comma separated list of URLs to match. Only events with URLs that match the whitelist will be fired. -->
+    <!--    A wildcard can be used such as *.openspan.com which will match support.openspan.com, products.openspan.com, etc. -->
+    <!--    All matches consider the leftmost portion of the URL. For example, www.openspan.com/products will match www.openspan.com/products/automation but not www.openspan.com/support -->
+    <Filter enabled="false" assembly="OpenSpan.Events" type="OpenSpan.Events.Filters.UrlFilter" whitelist="" />
+  </EventConsumers>
+  <DeploymentReferences>
+    <!-- List of assemblies excluded from deployment -->
+    <assembly name="ActiproSoftware.Shared.dll" />
+    <assembly name="ActiproSoftware.SyntaxEditor.dll" />
+    <assembly name="ActiproSoftware.WinUICore.dll" />
+    <assembly name="ActiproSoftware.SyntaxEditor.Net20.dll" />
+    <assembly name="ActiproSoftware.Shared.Net20.dll" />
+    <assembly name="ActiproSoftware.WinUICore.Net20.dll" />
+    <assembly name="AxInterop.SHDocVw.dll" />
+    <assembly name="AxInterop.WFICALib.dll" />
+    <assembly name="ICSharpCode.SharpZipLib.dll" />
+    <assembly name="InterBrokerLib.dll" />
+    <assembly name="Interop.Excel.dll" />
+    <assembly name="Interop.Outlook.dll" />
+    <assembly name="Interop.SHDocVw.dll" />
+    <assembly name="Interop.Word.dll" />
+    <assembly name="office.dll" />
+    <assembly name="Microsoft.Vbe.Interop.dll" />
+    <assembly name="Microsoft.Office.Interop.Outlook.dll" />
+    <assembly name="Microsoft.Office.Interop.Word.dll" />
+    <assembly name="Microsoft.Office.Interop.Excel.dll" />
+    <assembly name="Northwoods.Go.dll" />
+    <assembly name="DevExpress.Data.v6.3.dll" />
+    <assembly name="DevExpress.Utils.v6.3.dll" />
+    <assembly name="DevExpress.XtraEditors.v6.3.dll" />
+    <assembly name="DevExpress.XtraBars.v6.3.dll" />
+    <assembly name="DevExpress.XtraGrid.v6.3.dll" />
+    <assembly name="DevExpress.XtraPrinting.v6.3.dll" />
+  </DeploymentReferences>
+  <DeploymentReferences_8_0>
+    <!-- List of assemblies excluded from deployment -->
+    <assembly name="ActiproSoftware.Shared.dll" />
+    <assembly name="ActiproSoftware.SyntaxEditor.dll" />
+    <assembly name="ActiproSoftware.WinUICore.dll" />
+    <assembly name="ActiproSoftware.SyntaxEditor.Net20.dll" />
+    <assembly name="ActiproSoftware.Shared.Net20.dll" />
+    <assembly name="ActiproSoftware.WinUICore.Net20.dll" />
+    <assembly name="AxInterop.SHDocVw.dll" />
+    <assembly name="AxInterop.WFICALib.dll" />
+    <assembly name="ICSharpCode.SharpZipLib.dll" />
+    <assembly name="InterBrokerLib.dll" />
+    <assembly name="Interop.Excel.dll" />
+    <assembly name="Interop.Outlook.dll" />
+    <assembly name="Interop.SHDocVw.dll" />
+    <assembly name="Interop.Word.dll" />
+    <assembly name="office.dll" />
+    <assembly name="Microsoft.Vbe.Interop.dll" />
+    <assembly name="Microsoft.Office.Interop.Outlook.dll" />
+    <assembly name="Microsoft.Office.Interop.Word.dll" />
+    <assembly name="Microsoft.Office.Interop.Excel.dll" />
+    <assembly name="Newtonsoft.Json.dll" />
+    <assembly name="Northwoods.Go.dll" />
+    <assembly name="DevExpress.Data.v6.3.dll" />
+    <assembly name="DevExpress.Utils.v6.3.dll" />
+    <assembly name="DevExpress.XtraEditors.v6.3.dll" />
+    <assembly name="DevExpress.XtraBars.v6.3.dll" />
+    <assembly name="DevExpress.XtraGrid.v6.3.dll" />
+    <assembly name="DevExpress.XtraPrinting.v6.3.dll" />
+  </DeploymentReferences_8_0>
+  <CodeGeneratorReferences>
+    <!-- List of OpenSpan assemblies used as dynamic assembly references -->
+    <assembly name="OpenSpan.Adapters.dll" />
+    <assembly name="OpenSpan.Adapters.Web.dll" />
+    <assembly name="OpenSpan.Adapters.Windows.dll" />
+  </CodeGeneratorReferences>
+  <TypeResolution>
+    <!-- List of assemblies resolved by simple name, i.e. w/o version, culture and token -->
+    <assembly name="OpenSpan.dll" />
+    <assembly name="Microsoft.Office.Interop.Outlook.dll" />
+    <assembly name="Microsoft.Office.Interop.Word.dll" />
+    <assembly name="Microsoft.Office.Interop.Excel.dll" />
+    <!-- List of assemblies to pre-load at startup -->
+    <PreLoad>
+      <assembly name="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    </PreLoad>
+  </TypeResolution>
+  <TypeResolution_8_0>
+    <!-- List of assemblies resolved by simple name, i.e. w/o version, culture and token -->
+    <assembly name="OpenSpan.dll" />
+    <assembly name="Microsoft.Office.Interop.Outlook.dll" />
+    <assembly name="Microsoft.Office.Interop.Word.dll" />
+    <assembly name="Microsoft.Office.Interop.Excel.dll" />
+    <!-- List of assemblies to pre-load at startup -->
+    <PreLoad>
+      <assembly name="System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    </PreLoad>
+  </TypeResolution_8_0>
+  <Descriptor>
+    <!-- Designers -->
+    <!-- <designer oldType="" newType="" /> -->
+    <!-- Editor -->
+    <!-- <editor oldType="" newType="" /> -->
+    <editor oldType="System.Char[]" newType="OpenSpan.Design.CharArrayEditor, OpenSpan.Design" />
+    <!-- Converters -->
+    <!-- <converter oldType="" newType="" /> -->
+    <converter oldType="System.Char[]" newType="OpenSpan.Design.CharArrayConverter, OpenSpan.Design" />
+    <converter oldType="System.Uri" newType="OpenSpan.ComponentModel.UriConverter, OpenSpan" />
+  </Descriptor>
+  <Updater>
+    <Branch repoNickName="" name="" />
+    <Repos>
+      <Repo nickName="" url="" />
+    </Repos>
+    <Git>
+      <!-- 
+				Time in milliseconds to wait between output before aborting/killing/failing process (for testing SSH connection or performing Fetch operation)
+				Hang may occur up to this timeout due to missing SSH key or known_hosts file 
+			-->
+      <Timeouts sshTimeout="90000" fetchTimeout="0" />
+      <!-- URL used if http traffic is routed through a proxy server. -->
+      <Proxy url="" />
+    </Git>
+    <PrePost>
+      <!-- Time in milliseconds to wait before reporting error that service could not be stopped or started -->
+      <Timeouts stopServicesTimeout="10000" startServicesTimeout="10000" />
+    </PrePost>
+    <!-- 
+			RuntimeLauncher settings
+
+			showProgress - Will show a window displaying the progress during the update process 
+			showBlockingProcesses - Will show a window displaying the processes preventing the update
+			showNotLaunchingRuntime - Will show a window describing that Runtime is not being launched due to a failed upate. (See launchRuntimeOnFailedUpdate)
+		-->
+    <RuntimeLauncher showProgress="false" showBlockingProcesses="true" showNotLaunchingRuntime="true">
+      <!-- 
+				Behavior if desired update cannot be found locally
+
+				downloadOnStart- Will attempt to download the desired update if not already stored locally
+				downloadOnNewRepo - Will attempt to download the configured repo if not currently on said repo when launching Runtime
+				launchRuntimeOnFailedUpdate - Will launch the target/runtime even if there is an error during the update process
+				keepModifiedOnSameBranch - Will keep files that have been modified if the destination branch hasn't changed (test modules, etc)
+			-->
+      <UpdateProcedure downloadOnStart="false" launchRuntimeOnFailedUpdate="true" keepModifiedOnSameBranch="false" downloadOnNewRepo="false" />
+      <!-- 
+				Application to launch after update, defaults to OpenSpan.Runtime.exe
+
+				path - Absolute path to executable
+				arguments - Will be passed to the process, unless overridden by arguments supplied to RuntimeLauncher 
+			-->
+      <LaunchTarget path="" arguments="" />
+    </RuntimeLauncher>
+    <!--
+			minutesBeforeExpirationToReauthenticate - Number of minutes to wait before the current session expires to reauthentication
+			minutesBetweenAuthenticationReattempts - Upon authentication failure, the number of minutes to wait before retrying
+		-->
+    <UserHelper minutesBeforeExpirationToReauthenticate="10" minutesBetweenAuthenticationReattempts="10" />
+    <log4net>
+      <root>
+        <appender-ref ref="FileAppender" />
+      </root>
+      <appender name="FileAppender" type="log4net.Appender.RollingFileAppender">
+        <!-- Do not remove %property{componentName} from filename or there will be log entry data loss -->
+        <!-- Prefix relative path with %property{ConfigurationDirectory} to use the OpenSpan configuration directory defined in the CommonConfig.
+				The default value of this path is C:\Users\<userName>\AppData\Roaming\OpenSpan on Windows 7 and C:\Documents and Settings\<userName>\Application Data\OpenSpan on Windows XP -->
+        <file type="log4net.Util.PatternString" value="%property{ConfigurationDirectory}\%property{componentName}.log.txt" />
+        <appendToFile value="true" />
+        <rollingStyle value="Size" />
+        <!-- Maximum number of rolled over backup log files to keep -->
+        <maxSizeRollBackups value="5" />
+        <!-- Maximum size of log file before it is rolled over into new file -->
+        <maximumFileSize value="2MB" />
+        <staticLogFileName value="true" />
+        <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+        <layout type="log4net.Layout.PatternLayout">
+          <conversionPattern value="%date [%3thread] %-5level - %message%newline" />
+        </layout>
+      </appender>
+    </log4net>
+    <!-- Configuration of logging for Updater -->
+    <UpdaterLogCategories>
+      <!-- Log level used by all logging categories not in this list-->
+      <LogCategory name="Default" logLevel="3" />
+      <!-- Various categories -->
+      <LogCategory name="RemotingClient" logLevel="3" />
+      <LogCategory name="Updater" logLevel="3" />
+      <LogCategory name="AuditTrail" logLevel="3" />
+      <LogCategory name="Git" logLevel="3" />
+      <LogCategory name="PrePostOp" logLevel="3" />
+      <LogCategory name="PreReqCheck" logLevel="3" />
+      <LogCategory name="ConfigReader" logLevel="3" />
+      <LogCategory name="RuntimeSettings" logLevel="3" />
+      <LogCategory name="LogHelper" logLevel="3" />
+      <LogCategory name="XmlHelper" logLevel="3" />
+      <LogCategory name="AppDomainHelper" logLevel="3" />
+      <LogCategory name="ServerClientInterface" logLevel="3" />
+      <LogCategory name="ServerClientHelper" logLevel="3" />
+      <LogCategory name="CookieManager" logLevel="3" />
+      <LogCategory name="UserHelper" logLevel="3" />
+      <LogCategory name="CertificateManager" logLevel="3" />
+      <LogCategory name="CacheManager" logLevel="3" />
+      <LogCategory name="RESTClient" logLevel="3" />
+    </UpdaterLogCategories>
+    <PostUpdateTasks>
+      <!--
+			Specify the tasks to be run after a successful update with at least one of the newly added or modified files matching the pattern.
+			nickName  - A nick name given for the task to help identify it and correlate it in the logs. It may be left blank.
+			enabled   - Indicates whether the task should be run.
+			pattern   - The regex pattern used to search for the newly added or modified file from the update. Case is ignored. This must be
+									a valid regular expression with the appropriate characters escaped correctly. Note, this is different from a filespec.
+			exeName   - The name of the executable to run. It must be somewhere within the runtime installation folder or a subdirectory.
+			arguments - The arguments to pass to the executable. It may be left blank.
+			timeout   - The timeout in milliseconds. If blank, defaults to 120000 milliseconds (2 minutes)
+      
+			Example: Chrome extension installer to be run if a file in the BrowserExtensions\Chrome\ folder was added or modified after the update/checkout.
+			<Task nickName="Chrome Extension Installer" 
+			enabled="true" 
+			pattern="^BrowserExtensions\\Chrome\\" 
+			exeName="OpenSpan.ChromeExtensionInstaller.exe" 
+			arguments="-id:lajjpilliikppcbaghjehndpfdiiphbe" 
+			timeout=""/>
+			-->
+      <Task nickName="Chrome Extension Installer" enabled="false" pattern="OpenSpan\.ChromeExtensionInstaller\.exe" exeName="OpenSpan.ChromeExtensionInstaller.exe" arguments="-id:lajjpilliikppcbaghjehndpfdiiphbe" timeout="20000" />
+      <Task nickName="Chrome Messaging Host Installer" enabled="false" pattern="OpenSpan\.ChromeMessagingHostInstaller\.exe" exeName="OpenSpan.ChromeMessagingHostInstaller.exe" arguments="-id:lajjpilliikppcbaghjehndpfdiiphbe" timeout="20000" />
+      <Task nickName="Firefox Extension Installer" enabled="false" pattern="OpenSpan\.Translators\.Web\.FirefoxExtensionInstaller\.exe" exeName="OpenSpan.Translators.Web.FirefoxExtensionInstaller.exe" arguments="" timeout="20000" />
+    </PostUpdateTasks>
+  </Updater>
+  <LogCategories>
+    <!-- Trace level used by all logging categories not in this list -->
+    <Category name="Default" logLevel="3" />
+    <!-- Adapters - generic messages -->
+    <Category name="Keys" logLevel="3" />
+    <Category name="Matching" logLevel="3" />
+    <Category name="Adapters" logLevel="3" />
+    <!-- Adapters - specific adapters -->
+    <Category name="Java Adapter" logLevel="3" />
+    <Category name="Text Adapter" logLevel="3" />
+    <Category name="Text Screens" logLevel="3" />
+    <Category name="Web Adapter" logLevel="3" />
+    <Category name="Windows Adapter" logLevel="3" />
+    <Category name="Windows Messages" logLevel="3" />
+    <Category name="Lotus Adapter" logLevel="3" />
+    <!-- Connectors -->
+    <Category name="Citrix Connector" logLevel="3" />
+    <Category name="RemoteProxy" logLevel="3" />
+    <!-- Framework -->
+    <Category name="Automation" logLevel="3" />
+    <Category name="Serialization" logLevel="3" />
+    <Category name="Designer" logLevel="3" />
+    <Category name="Debugger" logLevel="3" />
+    <Category name="Deployment" logLevel="3" />
+    <Category name="Office" logLevel="3" />
+    <Category name="Web Service" logLevel="3" />
+    <Category name="Service" logLevel="3" />
+    <Category name="Studio" logLevel="3" />
+    <Category name="Default Value" logLevel="3" />
+    <Category name="Diagnostic Initialization" logLevel="3" />
+    <Category name="Project" logLevel="3" />
+    <Category name="Connectable Index" logLevel="3" />
+    <Category name="Object Explorer" logLevel="3" />
+    <Category name="Solution" logLevel="3" />
+    <Category name="File Management" logLevel="3" />
+    <Category name="FileVersionInfo" logLevel="3" />
+    <Category name="Configuration" logLevel="3" />
+    <Category name="User Data" logLevel="3" />
+    <Category name="Transformer" logLevel="3" />
+    <Category name="Attribute Provider" logLevel="3" />
+    <Category name="Manifest" logLevel="3" />
+    <Category name="Type Reference" logLevel="3" />
+    <Category name="Type Resolution" logLevel="3" />
+    <Category name="Runtime Application" logLevel="3" />
+    <Category name="Cloned Instance Broker" logLevel="3" />
+    <Category name="Runtime" logLevel="3" />
+    <Category name="Script" logLevel="3" />
+    <Category name="Component Inspector" logLevel="3" />
+    <Category name="Threading" logLevel="3" />
+    <Category name="Security" logLevel="3" />
+    <Category name="EventLog" logLevel="3" />
+    <Category name="Remote Configuration" logLevel="3" />
+    <Category name="AutomationBroker" logLevel="3" />
+    <Category name="Events" logLevel="3" />
+    <Category name="OSS" logLevel="3" />
+    <Category name="Playback" logLevel="3" />
+    <Category name="UnitTests" logLevel="3" />
+    <Category name="AgileDesktop" logLevel="3" />
+    <Category name="InteractionHost" logLevel="3" />
+    <Category name="ApplicationFramework" logLevel="3" />
+    <Category name="UI Connectors" logLevel="3" />
+    <Category name="ExecutionTracker" logLevel="3" />
+    <Category name="OCR" logLevel="3" />
+  </LogCategories>
+</manifest>

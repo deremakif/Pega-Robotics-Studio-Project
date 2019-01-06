@@ -1,0 +1,17 @@
+<Project>
+  <Preferences>
+    <ComponentTraySettings GroupBy="-1" View="List">
+      <Automator-8D670B5D2D22CA8 Height="102" />
+      <Automator-8D6716D6E8DB7D5 Height="61" />
+      <Automator-8D671930320A4A1 Height="95" />
+      <Automator-8D6717AC7C90255 Height="130" />
+      <Automator-8D6716EED22BBAA Height="76" />
+      <Automator-8D6717DB4E9B50B Height="130" />
+    </ComponentTraySettings>
+  </Preferences>
+  <Debugging>
+    <Watches>
+      <Watch ConnetableHostId="Automator-8D6717DB4E9B50B\ExitPoint-8D673605EF11106" MemberComponentId="Automator-8D6717DB4E9B50B\ExitPoint-8D673605EF11106" PropertyName="_param1" />
+    </Watches>
+  </Debugging>
+</Project>
